@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Body Browser with three js to visualize human anatomy">
+    <meta name="author" content="sivakumar,saikrishan,koushik">
+
+    <title>Body Browser</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/full-slider.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+<script src="js/jquery.min.js"></script>
+<script src="js/three.min.js"></script>
+<script src="js/ColladaLoader.js"></script>
+<script src="js/OBJLoader.js"></script>
+<script src="js/OrbitControls.js"></script>
+<script type="text/javascript" src="js/modernizr.custom.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.map"></script>
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Body Browser</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                     <li>
+                        <a href="index.html">Human Body</a>
+                    </li>
+                    <li>
+                        <a href="mammoth.html">Mammoth Body</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Full Page Image Background Carousel Header -->
+    <header id="myCarousel" class="carousel slide">
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+            <li data-target="#myCarousel" data-slide-to="1"></li>
+            <li data-target="#myCarousel" data-slide-to="2"></li>
+        </ol>
+
+        <!-- Wrapper for Slides -->
+        <div class="carousel-inner">
+            <div class="item active">
+                
+                <div class="fill" style="background-image:url('http://saikrishnanonline.com/bodybrowser/images/hb1.jpg');"></div>
+                <div class="carousel-caption">
+                    <h2>Body Browser</h2>
+                </div>
+            </div>
+            <div class="item">
+                
+                <div class="fill" style="background-image:url('http://saikrishnanonline.com/bodybrowser/images/body.jpeg');"></div>
+                <div class="carousel-caption">
+                    <h2>Human Anatomy</h2>
+                </div>
+            </div>
+            <div class="item">
+                <div class="fill" style="background-image:url('http://saikrishnanonline.com/bodybrowser/images/skeleton.jpg');"></div>
+                <div class="carousel-caption">
+                    <h2>Skeleton System</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+            <span class="icon-prev"></span>
+        </a>
+        <a class="right carousel-control" href="#myCarousel" data-slide="next">
+            <span class="icon-next"></span>
+        </a>
+
+    </header>
+    <div id="nav">
+<form>
+      
+      Male<input type="range" orient="vertical" name="points" id="points" value="1" min="0" max="2" onChange="fun()" >Female
+      
+    </form>
+</div>
+<div id="section">	
+<div id="body-image"></div>
+</div>
+
+     <!-- Page Content -->
+<script>
+	var scene, camera, renderer, skeletondae, bodydae, handdae, loader;
+	init();
+	animate();
+	function init() {
+		loadBody('images/skeleton.dae');	
+		//loadBody('images/man-dae/male.dae');			
+	}
+
+	function animate() {
+		requestAnimationFrame(animate);
+		renderer.render(scene, camera);
+		controls.update();
+
+	}
+	
+	function loadBody(location){
+		scene = new THREE.Scene();
+		var WIDTH = window.innerWidth,
+		HEIGHT = window.innerHeight;
+		WIDTH=WIDTH-200;
+		HEIGHT="500";
+		renderer = new THREE.WebGLRenderer({antialias:true});
+		renderer.setSize(WIDTH, HEIGHT);
+		document.getElementById("body-image").appendChild(renderer.domElement);
+		if(location=="images/girl-dae/girl.dae"){
+			camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 10000);
+			camera.position.set(10,10,10);
+		}
+		else if (location=="images/skeleton.dae"){
+			camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 10000);
+			camera.position.set(10,7,10);
+		}
+		else if(location=="images/man-dae/male.dae"){
+			camera = new THREE.PerspectiveCamera(60, WIDTH / HEIGHT, 0.1, 10000);
+			camera.position.set(10,10,10);
+		
+		}
+		
+		scene.add(camera);
+
+		window.addEventListener('resize', function() {
+			var WIDTH = window.innerWidth;
+			var HEIGHT = window.innerHeight;
+			renderer.setSize(WIDTH, HEIGHT);
+			camera.aspect = WIDTH / HEIGHT;
+			camera.updateProjectionMatrix();
+		});
+
+		var light = new THREE.PointLight(0xfffff3, 0.8);
+		light.position.set(-100,200,100);
+		scene.add(light);
+		var sphereSize = 1;
+		var pointLightHelper = new THREE.PointLightHelper( light, sphereSize );
+		scene.add( pointLightHelper );
+		var light2 = new THREE.PointLight(0xd7f0ff, 0.2);
+		light2.position.set(200,200,100);
+		scene.add(light2);
+		var sphereSize = 1;
+		var pointLightHelper2 = new THREE.PointLightHelper( light2, sphereSize );
+		scene.add( pointLightHelper2 );
+		var light3 = new THREE.PointLight(0xFFFFFF, 0.5);
+		light3.position.set(150,200,-100);
+		scene.add(light3);
+		var sphereSize = 1;
+		var pointLightHelper3 = new THREE.PointLightHelper( light3, sphereSize );
+		scene.add( pointLightHelper3 );
+		loader = new THREE.ColladaLoader();
+		loader.options.convertUpAxis = true;
+		loader.load( location, function ( collada ) {
+			skeletondae = collada.scene;
+			var skin = collada.skins[ 0 ];
+			if(location=="images/girl-dae/girl.dae"){
+				skeletondae.position.set(0,-5,0);
+				skeletondae.scale.set(7,7,7);
+			}
+			else if (location=="images/skeleton.dae"){
+				skeletondae.position.set(0,-5,0);
+				skeletondae.scale.set(0.7,0.7,0.7);
+			}
+			else if (location=="images/man-dae/male.dae"){
+				skeletondae.position.set(0,-7,0);
+           		skeletondae.scale.set(0.7,0.7,0.7);
+			}
+			
+			scene.add(skeletondae);
+			
+		});
+		controls = new THREE.OrbitControls(camera, renderer.domElement);
+	
+	}
+	function fun()
+	{
+	var a=document.getElementById("points").value;
+	if (a==0)
+	{
+		$( "#body-image" ).remove();
+		document.getElementById("section").innerHTML = "<div id='body-image'></div>";
+		loadBody('images/man-dae/male.dae');
+	}
+	if (a==1)
+	{
+		$( "#body-image" ).remove();
+		document.getElementById("section").innerHTML = "<div id='body-image'></div>";
+		loadBody('images/skeleton.dae');
+	}
+	if (a==2)
+	{		
+		$( "#body-image" ).remove();
+		document.getElementById("section").innerHTML = "<div id='body-image'></div>";
+		loadBody('images/girl-dae/girl.dae');		
+	}
+	
+	
+}
+</script>
+
+    
+    <!-- /.container -->
+
+<script type="text/javascript" src="js/retina.js"></script> 
+<script type="text/javascript" src="js/jquery.easing.1.3.js"></script> 
+<script type="text/javascript" src="js/smoothscroll.js"></script> 
+<!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Script to Activate the Carousel -->
+    <script>
+    $('.carousel').carousel({
+        interval: 5000 //changes the speed
+    })
+    </script>
+    <style>
+#nav {
+    line-height:30px;
+    background-color:#eeeeee;
+    height:300px;
+    width:100px;
+    float:left;
+    padding:20px;
+}
+#section {
+    float:left;
+	padding:20px;
+}
+</style> 
+<!-- Footer -->
+        <footer>
+         <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; Tech Wizards 2015</p>
+                </div>
+            </div>
+            </div>
+        </footer>
+</body>
+</html>
